@@ -85,7 +85,7 @@
                                     </div>
                                     <input class="btn btn-primary pull-right" type="submit" value="Post" />
                                     <ul class="list-inline">
-                                    <li><img src="ressource/photo.svg"width="10%"/><input type="file" name="img" accept="image/png, image/jpeg, image/jpg, image/gif"></li>
+                                    <li><img src="ressource/photo.svg"width="10%"/><input type="file" name="img[]" accept="image/png, image/jpeg, image/jpg, image/gif" multiple></li>
                                     </ul>
                                     <input type="hidden" name="Max_FILE_Size" value="100000">
                                   </form>

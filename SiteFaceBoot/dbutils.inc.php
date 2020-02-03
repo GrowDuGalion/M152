@@ -29,29 +29,6 @@ function m152() {
   // Pas d'erreur, retourne un connecteur
   return $dbc;
 }
-
-//Récuprérer tous les elements de la table tequipe
-function getAll($limit) {
-  static $ps = null;
-  $sql = "SELECT * FROM foot.Tequipe LIMIT :limit;";
-
-  if ($ps == null) {
-    $ps = m152()->prepare($sql);
-  }
-  $answer = false;
-  try {
-    $ps->bindParam(':limit', $limit, PDO::PARAM_INT);
-
-    if ($ps->execute())
-      $answer = $ps->fetchAll(PDO::FETCH_ASSOC);
-  } catch (PDOException $e) {
-    echo $e->getMessage();
-  }
-  // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
-
-  return $answer;
-}
-
   //Insertion dans la table media
   function insertionMedia($typeParam, $nomParam)
   {
@@ -76,11 +53,11 @@ function getAll($limit) {
           return $answer;
   }
 
-  //Supprimer les fichiers au type non autorise
+  //Supprimer les fichiers au type non autorise dans le serveur
   function SupTypeNonAutorise()
   {
           static $ps = null;
-          $sql = "DELETE FROM media WHERE typeMedia != 'jpeg' AND typeMedia != 'jpg' AND typeMedia != 'png' AND typeMedia != 'gif';";
+          $sql = "DELETE FROM media WHERE typeMedia != '.jpeg' AND typeMedia != '.jpg' AND typeMedia != '.png' AND typeMedia != '.gif';";
   
           if ($ps == null) {
             $ps = m152()->prepare($sql);
@@ -99,25 +76,28 @@ function getAll($limit) {
   }
 
 
-  //Obtenir le nom d'un pays a partir de son code
-  function getPays($codePays) {
-    static $ps = null;
-    $sql = "SELECT NomPays FROM tpays WHERE (CodePays = :codePaysRecu);";
+  //Insertion dans la table commentaire
+  function insertionPost($commentParam, $idParam)
+  {
+          static $ps = null;
+          $sql = "INSERT INTO post (commentaire, idMedia) VALUES (:commentInsert, idInsert);";
   
+          if ($ps == null) {
+            $ps = m152()->prepare($sql);
+          }
+          $answer = false;
+          try {
+            $ps->bindParam(':commentInsert', $commentParam, PDO::PARAM_STR);  
+            $ps->bindParam(':idInsert', $idParam, PDO::PARAM_INT);      
   
-    if ($ps == null) {
-      $ps = m152()->prepare($sql);
-    }
-    $answer = false;
-    try {
-      $ps->bindParam(':codePaysRecu', $codePays, PDO::PARAM_STR);
+            if ($ps->execute())
+              $answer = true;
+          } catch (PDOException $e) {
+            echo $e->getMessage();
+          }
+          // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
-      if ($ps->execute())
-      $answer = $ps->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-      echo $e->getMessage();
-    }
-    return $answer;
+          return $answer;
   }
 
   
