@@ -81,7 +81,7 @@
                                    <form class="form-horizontal" method="POST" role="form" action="upload.php" enctype="multipart/form-data">
                                     <h4>What's New</h4>
                                      <div class="form-group" style="padding:14px;">
-                                      <textarea class="form-control" placeholder="Description"></textarea>
+                                      <textarea class="form-control" placeholder="Description" name="Message"></textarea>
                                     </div>
                                     <input class="btn btn-primary pull-right" type="submit" value="Post" />
                                     <ul class="list-inline">

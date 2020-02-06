@@ -30,10 +30,10 @@ function m152() {
   return $dbc;
 }
   //Insertion dans la table media
-  function insertionMedia($typeParam, $nomParam)
+  function insertionMedia($typeParam, $nomParam, $idParam)
   {
           static $ps = null;
-          $sql = "INSERT INTO media (typeMedia, nomMedia) VALUES (:typeInsert, :nomInsert);";
+          $sql = "INSERT INTO media (typeMedia, nomMedia, idPost) VALUES (:typeInsert, :nomInsert, :idInsert);";
   
           if ($ps == null) {
             $ps = m152()->prepare($sql);
@@ -41,29 +41,8 @@ function m152() {
           $answer = false;
           try {
             $ps->bindParam(':typeInsert', $typeParam, PDO::PARAM_STR);
-            $ps->bindParam(':nomInsert', $nomParam, PDO::PARAM_STR);           
-  
-            if ($ps->execute())
-              $answer = true;
-          } catch (PDOException $e) {
-            echo $e->getMessage();
-          }
-          // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
-  
-          return $answer;
-  }
-
-  //Supprimer les fichiers au type non autorise dans le serveur
-  function SupTypeNonAutorise()
-  {
-          static $ps = null;
-          $sql = "DELETE FROM media WHERE typeMedia != '.jpeg' AND typeMedia != '.jpg' AND typeMedia != '.png' AND typeMedia != '.gif';";
-  
-          if ($ps == null) {
-            $ps = m152()->prepare($sql);
-          }
-          $answer = false;
-          try {         
+            $ps->bindParam(':nomInsert', $nomParam, PDO::PARAM_STR); 
+            $ps->bindParam(':idInsert', $idParam, PDO::PARAM_INT);             
   
             if ($ps->execute())
               $answer = true;
@@ -77,18 +56,17 @@ function m152() {
 
 
   //Insertion dans la table commentaire
-  function insertionPost($commentParam, $idParam)
+  function insertionPost($commentParam)
   {
           static $ps = null;
-          $sql = "INSERT INTO post (commentaire, idMedia) VALUES (:commentInsert, idInsert);";
+          $sql = "INSERT INTO post (commentaire) VALUES (:commentInsert);";
   
           if ($ps == null) {
             $ps = m152()->prepare($sql);
           }
           $answer = false;
           try {
-            $ps->bindParam(':commentInsert', $commentParam, PDO::PARAM_STR);  
-            $ps->bindParam(':idInsert', $idParam, PDO::PARAM_INT);      
+            $ps->bindParam(':commentInsert', $commentParam, PDO::PARAM_STR);     
   
             if ($ps->execute())
               $answer = true;
@@ -98,6 +76,27 @@ function m152() {
           // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
           return $answer;
+  }
+
+  function getPostId() 
+  {
+    static $ps = null;
+    $sql = "SELECT LAST_INSERT_ID() AS Last_id FROM post  LIMIT 1;";
+  
+    if ($ps == null) {
+      $ps = m152()->prepare($sql);
+    }
+    $answer = false;
+    try {
+  
+      if ($ps->execute())
+        $answer = $ps->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+      echo $e->getMessage();
+    }
+    // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
+  
+    return $answer;
   }
 
   
