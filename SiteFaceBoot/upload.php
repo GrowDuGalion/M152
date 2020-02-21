@@ -6,6 +6,7 @@ $MessagePost = filter_input(INPUT_POST, 'Message', FILTER_SANITIZE_STRING);
 if(isset($_FILES['img']))
 { 
      $countfiles = count($_FILES['img']['name']);
+     $permisInsertion = false;
 
      //Controler la taille des fichiers
      for($l=0;$l<$countfiles;$l++)
