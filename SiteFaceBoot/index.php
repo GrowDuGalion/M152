@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+<?php
+require "./dbutils.inc.php";
+?>
+=======
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
+=======
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -77,7 +86,14 @@
                          <div class="col-sm-5">
                            
                               <div class="panel panel-default">
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
                                 <div class="panel-thumbnail"><img src="/assets/example/bg_5.jpg" class="img-responsive"></div>
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
+=======
+                                <div class="panel-thumbnail"><img src="/assets/example/bg_5.jpg" class="img-responsive"></div>
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
                                 <div class="panel-body">
                                   
                                   <img src="ressource/imageProfil.png" alt="Photo de chien" width="100%"/>
@@ -88,6 +104,12 @@
                                     <img src="https://lh3.googleusercontent.com/uFp_tsTJboUY7kue5XAsGA=s28" width="28px" height="28px">
                                   </p>
                                 </div>
+<<<<<<< HEAD
+<<<<<<< HEAD
+                              </div>                                                    
+=======
+=======
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
                               </div>
 
                            
@@ -122,6 +144,10 @@
                                     <ul class="list-unstyled"><li><a href="http://www.bootply.com/templates">Dashboard</a></li><li><a href="http://www.bootply.com/templates">Darkside</a></li><li><a href="http://www.bootply.com/templates">Greenfield</a></li></ul>
                                   </div>
                               </div>
+<<<<<<< HEAD
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
+=======
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
                            
                               <div class="panel panel-default">
                                 <div class="panel-heading"><h4>What Is Bootstrap?</h4></div>
@@ -129,6 +155,15 @@
                                 	Bootstrap is front end frameworkto build custom web applications that are fast, responsive &amp; intuitive. It consist of CSS and HTML for typography, forms, buttons, tables, grids, and navigation along with custom-built jQuery plug-ins and support for responsive layouts. With dozens of reusable components for navigation, pagination, labels, alerts etc..                          </div>
                               </div>
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+                              <?php
+                                affichagePostGauche();
+                              ?>
+=======
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
+=======
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
                            		
                            
                           </div>
@@ -144,7 +179,14 @@
                                 </div>                                                    
                             
                                <div class="panel panel-default">
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
                                 <div class="panel-thumbnail"><img src="/assets/example/bg_4.jpg" class="img-responsive"></div>
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
+=======
+                                <div class="panel-thumbnail"><img src="/assets/example/bg_4.jpg" class="img-responsive"></div>
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
                                 <div class="panel-body">
                                   <img src="ressource/paysage.jpg" alt="Photo de chien" width="100%"/>
                                   <p class="lead">Social Good</p>
@@ -157,6 +199,16 @@
                                   </p>
                                 </div>
                               </div>
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+                              <?php
+                                affichagePostDroite();
+                              ?>
+=======
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
+=======
+>>>>>>> 6bed5998f4bb095c62030646e03188911a007159
                             
                           </div>
                        </div><!--/row-->
