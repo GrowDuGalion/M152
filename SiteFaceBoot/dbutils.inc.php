@@ -81,7 +81,7 @@ function m152() {
   }
 
  //Faire une transaction
- function transaction($tableMediaParam, $textParam)
+ function transactionInsert($tableMediaParam, $textParam)
  {
    //booleen pour autoriser un rollback si detection d'une erreur PDO dans les fonctions d'insertion
    $rollBackAutorise = false;
@@ -103,10 +103,44 @@ function m152() {
    $idPost = getPostId();
 
    //Parcourir les différentes données des medias recues pour les insérer
-   foreach ($tableMediaParam as $media) 
+   if(isset($tableMediaParam[0]))
    {
-     insertionMedia($media[0],$media[1],  $idPost['Last_id']);
+      foreach ($tableMediaParam as $media) 
+      {
+        insertionMedia($media[0],$media[1],  $idPost['Last_id']);
+      }
    }
+
+   //Faire un rollback s'il y a erreur, sinon commit les insertions
+   if($rollBackAutorise)
+   {
+     $ps->rollBack();
+   }
+   else 
+   {
+     $ps->commit();
+   }
+ }
+
+ //Faire une transaction
+ function transactionDelete($idParam)
+ {
+   //booleen pour autoriser un rollback si detection d'une erreur PDO dans les fonctions d'insertion
+   $rollBackAutorise = false;
+
+   //Singleton PDO
+   static $ps = null;
+   if ($ps == null) 
+   {
+     $ps = m152();
+   }
+
+   //commencer la transaction
+   $ps->beginTransaction();
+
+   //Suppression du post et ses médias
+   delMediaWithId($idParam);
+   delPostWithId($idParam);
 
    //Faire un rollback s'il y a erreur, sinon commit les insertions
    if($rollBackAutorise)
@@ -143,7 +177,7 @@ function m152() {
   function getAllPost()
   {
     static $ps = null;
-    $sql = "SELECT * FROM post LIMIT 20;";
+    $sql = "SELECT * FROM post ORDER BY creationDate DESC LIMIT 30;";
   
     if ($ps == null) {
       $ps = m152()->prepare($sql);
@@ -183,7 +217,53 @@ function m152() {
     return $answer;
   }
 
-  function affichagePostGauche()
+  function delMediaWithId($idParam)
+  {
+    static $ps = null;
+    $sql = "DELETE FROM media WHERE idPost=:idSelect;";
+  
+    if ($ps == null) {
+      $ps = m152()->prepare($sql);
+    }
+    $answer = false;
+    try {
+      $ps->bindParam(':idSelect', $idParam, PDO::PARAM_INT);
+  
+      if ($ps->execute())
+      $answer = true;
+    } catch (PDOException $e) {
+      echo $e->getMessage();
+      $rollBackAutorise = true;
+    }
+    // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
+  
+    return $answer;
+  }
+
+  function delPostWithId($idParam)
+  {
+    static $ps = null;
+    $sql = "DELETE FROM post WHERE idPost=:idSelect;";
+  
+    if ($ps == null) {
+      $ps = m152()->prepare($sql);
+    }
+    $answer = false;
+    try {
+      $ps->bindParam(':idSelect', $idParam, PDO::PARAM_INT);
+  
+      if ($ps->execute())
+      $answer = true;
+    } catch (PDOException $e) {
+      echo $e->getMessage();
+      $rollBackAutorise = true;
+    }
+    // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
+  
+    return $answer;
+  }
+
+  function affichagePost($cote)
   {  
     $formatMessage = "<div class=\"panel panel-default\">
     <div class=\"panel-heading\"><h4>Message</h4></div>
@@ -193,78 +273,74 @@ function m152() {
           %s  
         </p>    
         <p>
-          <img src=\"ressource/iconModif.png\" width=\"32px\" height=\"38px\">
-          <img src=\"ressource/iconSupp.png\" width=\"28px\" height=\"28px\">
+          <a href=\"modification.php?identifiant=%d\"><img src=\"ressource/iconModif.png\" width=\"32px\" height=\"38px\"></a>
+          <a href=\"suppression.php?identifiant=%d\"><img src=\"ressource/iconSupp.png\" width=\"28px\" height=\"28px\"></a>
         </p>                   
       </div>
     </div>";
 
-    $imageMessage = "";
-    $textMessage = "";
     $message = "";
-    
     
     foreach(getAllPost() as $post)
     {
-      if($post['idPost']%2 != 0)
+      $mediaMessage = "";
+      
+      $permisAffiche = false; 
+
+      if($cote == "droite")
       {
-        foreach(getMediaWithId($post['idPost']) as $media)
-        {       
-          $cheminImage = $media['nomMedia'];
-          $formatImage = "<img src=\"%s\" alt=\"Photo de grow\" width=\"100%%\"/>";
-          $imageMessage .= sprintf($formatImage, $cheminImage);
+        if($post['idPost']%2 != 0)
+        {
+          $permisAffiche = true;
         }
-
-        $textMessage = $post['commentaire'];
-
-        $message .= sprintf($formatMessage,$imageMessage,$textMessage);
+      }
+      if($cote == "gauche")
+      {
+        if($post['idPost']%2 == 0)
+        {
+          $permisAffiche = true;
+        }
       }
 
+      if($permisAffiche)
+      {     
+        foreach(getMediaWithId($post['idPost']) as $media)
+        {                   
+          if(stristr($media['typeMedia'], 'image'))
+          {
+            $cheminImage = $media['nomMedia'];
+            $formatImage = "<img src=\"%s\" alt=\"Photo de grow\" width=\"100%%\"/>";
+            $mediaMessage .= sprintf($formatImage, $cheminImage);
+          }
+          if(stristr($media['typeMedia'], 'video'))
+          {
+            $cheminVideo = $media['nomMedia'];
+            $typeVideo = $media['typeMedia'];
+            $formatVideo = "  <video width=\"100%%\" height=\"300\" autoplay muted loop>
+                                <source src=\"%s\" type=\"%s\">
+                              </video>";
+            $mediaMessage .= sprintf($formatVideo, $cheminVideo, $typeVideo);
+          }
+          if(stristr($media['typeMedia'], 'audio'))
+          {
+            $cheminAudio = $media['nomMedia'];
+            $typeAudio = $media['typeMedia'];
+            $formatAudio = "  <audio controls>
+                                <source src=\"%s\" type=\"%s\">
+                              </audio>";
+            $mediaMessage .= sprintf($formatAudio, $cheminAudio, $typeAudio);
+          }                      
+        }  
+        
+        $textMessage = $post['commentaire'];
+        $idMessage = $post['idPost'];
+
+        $message .= sprintf($formatMessage,$mediaMessage,$textMessage, $idMessage, $idMessage); 
+      }                           
     }
 
     echo $message;    
   }
 
-  function affichagePostDroite()
-  {  
-    $formatMessage = "<div class=\"panel panel-default\">
-    <div class=\"panel-heading\"><h4>Message</h4></div>
-    %s
-      <div class=\"panel-body\">
-        <p>
-          %s  
-        </p>  
-        <p>
-          <img src=\"ressource/iconModif.png\" width=\"32px\" height=\"38px\">
-          <img src=\"ressource/iconSupp.png\" width=\"28px\" height=\"28px\">
-        </p>                     
-      </div>
-    </div>";
-
-    $imageMessage = "";
-    $textMessage = "";
-    $message = "";
-    
-    
-    foreach(getAllPost() as $post)
-    {
-      if($post['idPost']%2 == 0)
-      {
-        foreach(getMediaWithId($post['idPost']) as $media)
-        {       
-          $cheminImage = $media['nomMedia'];
-          $formatImage = "<img src=\"%s\" alt=\"Photo de grow\" width=\"100%%\"/>";
-          $imageMessage .= sprintf($formatImage, $cheminImage);
-        }
-
-        $textMessage = $post['commentaire'];
-
-        $message .= sprintf($formatMessage,$imageMessage,$textMessage);
-      }
-
-    }
-
-    echo $message;    
-  }
 
   

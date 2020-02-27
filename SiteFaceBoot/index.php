@@ -99,7 +99,7 @@ require "./dbutils.inc.php";
                               </div>
 
                               <?php
-                                affichagePostGauche();
+                                affichagePost("gauche");
                               ?>
                            		
                            
@@ -130,7 +130,7 @@ require "./dbutils.inc.php";
                               </div>
 
                               <?php
-                                affichagePostDroite();
+                                affichagePost("droite");
                               ?>
                             
                           </div>

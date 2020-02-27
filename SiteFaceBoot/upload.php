@@ -2,33 +2,34 @@
 require "./dbutils.inc.php";
 
 $MessagePost = filter_input(INPUT_POST, 'Message', FILTER_SANITIZE_STRING);
+$tableValeursMediaInsert = array();
 
-if(isset($_FILES['img']))
+var_dump($_FILES['import']['name'][0]);
+
+if($_FILES['import']['name'][0] != "")
 { 
-     $countfiles = count($_FILES['img']['name']);
-     $permisInsertion = false;
+     $countfiles = count($_FILES['import']['name']);
 
      //Controler la taille des fichiers
      for($l=0;$l<$countfiles;$l++)
      {
-          $taille_maxi = 3000000;
-          $taille = $_FILES['img']['size'][$l];
+          $taille_maxi = 30000000;
+          $taille = $_FILES['import']['size'][$l];
 
           if($taille> $taille_maxi) //Si taille dépasse la taille maximum autorisé
           {
-               $erreur = "Vous devez choisir des fichiers moins lourds";
+               $erreur = " Vous devez choisir des fichiers moins lourds.";
           }
      }
 
      //Controller le type des fichiers
      for($j=0;$j<$countfiles;$j++)
      {
-          $extensions = array('image/png', 'image/gif', 'image/jpg', 'image/jpeg');
-          $extension = $_FILES['img']['type'][$j]; 
-
+          $extensions = array('image/png', 'image/gif', 'image/jpg', 'image/jpeg', 'video/mp4', 'video/webm', 'video/ogg', 'audio/ogg', 'audio/mp3');
+          $extension = $_FILES['import']['type'][$j]; 
           if(!in_array($extension, $extensions)) //Si l'extension n'est pas dans le tableau
           {
-               $erreur = 'Vous devez uploader un fichier de type png, gif, jpg, jpeg';
+               $erreur = ' Vous devez uploader un fichier de type png, gif, jpg, jpeg, video.';
           }
      }
 
@@ -36,9 +37,8 @@ if(isset($_FILES['img']))
      for($i=0;$i<$countfiles;$i++)
      {          
           $dossier = 'upload/';
-          $fichier = basename($_FILES['img']['name'][$i]);
-          $extension = $_FILES['img']['type'][$i]; 
-          $tableValeursMediaInsert;
+          $fichier = basename($_FILES['import']['name'][$i]);
+          $extension = $_FILES['import']['type'][$i];          
 
           if(!isset($erreur)) //S'il n'y a pas d'erreur, on upload
           {
@@ -52,14 +52,12 @@ if(isset($_FILES['img']))
                $chemin =  $dossier . uniqid() . '_' . $fichier;
 
                //Uploader les fichiers dans un dossier
-               if(move_uploaded_file($_FILES['img']['tmp_name'][$i], $chemin)) //Si la fonction renvoie TRUE, c'est que ça a fonctionné...
+               if(move_uploaded_file($_FILES['import']['tmp_name'][$i], $chemin)) //Si la fonction renvoie TRUE, c'est que ça a fonctionné...
                {
                     //Faire un tableau des donnees d'un media pour insérer plus tard
                     //Seule les medias insérer avec succès pourront etre insérer dans la base de donnée
                     $tableValeursMediaInsert[] = array($extension, $chemin);
                     
-                    //Si un fichier est uploadé avec succès alors autorisation à insérer dans base de donnée
-                    $permisInsertion = true;
                }
                else //Sinon (la fonction renvoie FALSE).
                {
@@ -71,14 +69,18 @@ if(isset($_FILES['img']))
                //Afficher l'erreur
                echo $erreur;
           }
-     }
-     if($permisInsertion)
-     {
-          echo 'Upload effectue avec succes (ou en partie) !';
-
-          //Démarrer la transaction pour insérer dans la base de donnée
-          transaction($tableValeursMediaInsert, $MessagePost);
-     }
+     }   
    
+}
+else {
+     echo 'Rien à uploader!';
+}
+
+if(isset($MessagePost) || isset($tableValeursMediaInsert[0]))
+{
+     echo 'Upload effectue avec succes (ou en partie) !';
+
+     //Démarrer la transaction pour insérer dans la base de donnée
+     transactionInsert($tableValeursMediaInsert, $MessagePost);
 }
 ?>

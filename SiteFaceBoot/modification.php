@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
-		<title>Post</title>
+		<title>Modification</title>
 		<meta name="generator" content="Bootply" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<link href="css/bootstrap.min.css" rel="stylesheet">
@@ -75,36 +75,72 @@
                       	<div class="row">
                           
                          <!-- main col left --> 
-                         <div class="col-sm-5">                                                      
-                           
-                              <div class="well"> 
-                                   <form class="form-horizontal" method="POST" role="form" action="upload.php" enctype="multipart/form-data">
-                                    <h4>What's New</h4>
-                                     <div class="form-group" style="padding:14px;">
-                                      <textarea class="form-control" placeholder="Description" name="Message"></textarea>
+                            <div class="col-sm-5">                                                      
+                                                         
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><h4>What Is Bootstrap?</h4></div>
+                                    <div class="panel-body">
+                                        Bootstrap is front end frameworkto build custom web applications that are fast, responsive &amp; intuitive. It consist of CSS and HTML for typography, forms, buttons, tables, grids, and navigation along with custom-built jQuery plug-ins and support for responsive layouts. With dozens of reusable components for navigation, pagination, labels, alerts etc..                          </div>
+                                </div>
+                                
+                                <div class="well"> 
+                                    <form class="form-horizontal" method="POST" role="form" action="upload.php" enctype="multipart/form-data">
+                                        <h4>Changer le texte</h4>
+                                        <div class="form-group" style="padding:14px;">
+                                        <textarea class="form-control" placeholder="Description" name="Message"></textarea>
+                                        </div>
+                                        <input class="btn btn-primary pull-right" type="submit" value="Changer" />
+                                        <ul class="list-inline">
+                                        <li></li>
+                                        </ul>
+                                    </form>
+                                </div>   
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><h4>Terminer la modification</h4></div>
+                                    <div class="panel-body">
+                                    <a class="btn btn-primary" href="index.php">Fin de la modification</a> 
                                     </div>
-                                    <input class="btn btn-primary pull-right" type="submit" value="Post" />
-                                    <ul class="list-inline">
-                                    <li><input type="file" name="import[]" accept="image/png, image/jpeg, image/jpg, image/gif, video/mp4, video/webm, video/ogg, audio/ogg, audio/mpeg" multiple></li>
-                                    </ul>
-                                    <input type="hidden" name="Max_FILE_Size" value="10000000">
-                                  </form>
-                              </div>
-                                                     		
+                                </div>                    		
                            
-                          </div>
+                            </div>
                           
                           <!-- main col right -->
-                          <div class="col-sm-7">
+                             <div class="col-sm-7">
                                                                
                                 <div class="panel panel-default">                                  
-                                  <div class="panel-body">
+                                    <div class="panel-body">
                                     <div class="clearfix"></div>
-                                    <h2>POST</h2>
-                                  </div>
-                                </div>                                                                                                               
+                                    <h2>MODIFICATION</h2>
+                                    </div>
+                                </div>    
+
+                                <div class="well"> 
+                                    <form class="form-horizontal" method="POST" role="form" action="upload.php" enctype="multipart/form-data">
+                                        <h4>Ajouter un média</h4>
+                                        <input class="btn btn-primary pull-right" type="submit" value="Ajouter" />
+                                        <ul class="list-inline">
+                                            <li><input type="file" name="import[]" accept="image/png, image/jpeg, image/jpg, image/gif, video/mp4, video/webm, video/ogg, audio/ogg, audio/mpeg" multiple></li>
+                                        </ul>
+                                        <input type="hidden" name="Max_FILE_Size" value="10000000">
+                                    </form>
+                                </div>  
+                                
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"> <h4>Supprimer un ou des médias</h4></div>
+                                    <div class="panel-body">
+                                        <form class="form-horizontal" method="POST" role="form" action="upload.php">
+                                            <ul class="list-group">
+                                                <li class="list-group-item"><input type="checkbox" id="music1" name="media" value="music"><label for="music1">Musique</label></li>
+                                                <li class="list-group-item"><input type="checkbox" id="music2" name="media" value="music"><label for="music2">Musique</label></li>
+                                                <li class="list-group-item"><input type="checkbox" id="music3" name="media" value="music"><label for="music3">Musique</label></li>
+                                            </ul>
+                                            <input class="btn btn-primary pull-right" type="submit" value="Supprimer" />
+                                        </form>
+                                    </div>
+                                </div>                                                                                                         
                             
-                          </div>
+                             </div>
                        </div><!--/row-->
                       
                         <div class="row">
