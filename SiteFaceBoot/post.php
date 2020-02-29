@@ -78,16 +78,16 @@
                          <div class="col-sm-5">                                                      
                            
                               <div class="well"> 
-                                   <form class="form-horizontal" method="POST" role="form" action="upload.php" enctype="multipart/form-data">
+                                   <form class="form-horizontal" method="POST" role="form" action="uploadInsert.php" enctype="multipart/form-data">
                                     <h4>What's New</h4>
                                      <div class="form-group" style="padding:14px;">
                                       <textarea class="form-control" placeholder="Description" name="Message"></textarea>
                                     </div>
                                     <input class="btn btn-primary pull-right" type="submit" value="Post" />
                                     <ul class="list-inline">
-                                    <li><input type="file" name="import[]" accept="image/png, image/jpeg, image/jpg, image/gif, video/mp4, video/webm, video/ogg, audio/ogg, audio/mpeg" multiple></li>
+                                    <li><input type="file" name="import[]" accept="image/png, image/jpeg, image/jpg, image/gif, video/mp4, video/webm, video/ogg, audio/ogg, audio/mpeg, audio/mp3" multiple></li>
                                     </ul>
-                                    <input type="hidden" name="Max_FILE_Size" value="10000000">
+                                    <input type="hidden" name="pageRedirect" value="index.php">
                                   </form>
                               </div>
                                                      		
@@ -162,7 +162,7 @@
           <div>
           <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true">Post</button>
             <ul class="pull-left list-inline"><li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li><li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li><li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li></ul>
-		  </div>	
+		      </div>	
       </div>
   </div>
   </div>

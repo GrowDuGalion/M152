@@ -1,3 +1,20 @@
+<?php
+require "./dbutils.inc.php";
+
+$idModif = filter_input(INPUT_GET, 'identifiant', FILTER_VALIDATE_INT);
+
+if(empty($idModif))
+{
+  header("Location: index.php");
+}
+
+$mediasAAffich = getMediaWithIdPost($idModif);
+$textAAffich = getPostWithId($idModif)[0]["commentaire"];
+
+affichageMediasModif($idModif);
+$pageNom = "modification.php?identifiant=" . $idModif;
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -18,191 +35,139 @@
         <div class="row row-offcanvas row-offcanvas-left">
                                
           
-            <!-- main right col -->
-            <div class="column col-sm-12 col-xs-12" id="main">
-                
-                <!-- top nav -->
-              	<div class="navbar navbar-blue navbar-static-top">  
-                    <div class="navbar-header">
-                      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle</span>
-                        <span class="icon-bar"></span>
-          				<span class="icon-bar"></span>
-          				<span class="icon-bar"></span>
-                      </button>
-                      <a href="/" class="navbar-brand logo">b</a>
-                  	</div>
-                  	<nav class="collapse navbar-collapse" role="navigation">
-                    <form class="navbar-form navbar-left">
-                        <div class="input-group input-group-sm" style="max-width:360px;">
-                          <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
-                          <div class="input-group-btn">
-                            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                          </div>
-                        </div>
-                    </form>
-                    <ul class="nav navbar-nav">
-                      <li>
-                        <a href="index.php"><i class="glyphicon glyphicon-home"></i> Home</a>
-                      </li>
-                      <li>
-                        <a href="post.php"><i class="glyphicon glyphicon-plus"></i> Post</a>
-                      </li>
-                      <li>
-                        <a href="#"><span class="badge">badge</span></a>
-                      </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                      <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i></a>
-                        <ul class="dropdown-menu">
-                          <li><a href="">More</a></li>
-                          <li><a href="">More</a></li>
-                          <li><a href="">More</a></li>
-                          <li><a href="">More</a></li>
-                          <li><a href="">More</a></li>
-                        </ul>
-                      </li>
-                    </ul>
-                  	</nav>
-                </div>
-                <!-- /top nav -->
+          <!-- main right col -->
+          <div class="column col-sm-12 col-xs-12" id="main">
               
-                <div class="padding">
-                    <div class="full col-sm-9">
-                      
-                        <!-- content -->                      
-                      	<div class="row">
-                          
-                         <!-- main col left --> 
-                            <div class="col-sm-5">                                                      
-                                                         
-                                <div class="panel panel-default">
-                                    <div class="panel-heading"><h4>What Is Bootstrap?</h4></div>
-                                    <div class="panel-body">
-                                        Bootstrap is front end frameworkto build custom web applications that are fast, responsive &amp; intuitive. It consist of CSS and HTML for typography, forms, buttons, tables, grids, and navigation along with custom-built jQuery plug-ins and support for responsive layouts. With dozens of reusable components for navigation, pagination, labels, alerts etc..                          </div>
-                                </div>
-                                
-                                <div class="well"> 
-                                    <form class="form-horizontal" method="POST" role="form" action="upload.php" enctype="multipart/form-data">
-                                        <h4>Changer le texte</h4>
-                                        <div class="form-group" style="padding:14px;">
-                                        <textarea class="form-control" placeholder="Description" name="Message"></textarea>
-                                        </div>
-                                        <input class="btn btn-primary pull-right" type="submit" value="Changer" />
-                                        <ul class="list-inline">
-                                        <li></li>
-                                        </ul>
-                                    </form>
-                                </div>   
+              <!-- top nav -->
+              <div class="navbar navbar-blue navbar-static-top">  
+                  <div class="navbar-header">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                      <span class="sr-only">Toggle</span>
+                      <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                    </button>
+                    <a href="/" class="navbar-brand logo">b</a>
+                  </div>
+                  <nav class="collapse navbar-collapse" role="navigation">
+                  <form class="navbar-form navbar-left">
+                      <div class="input-group input-group-sm" style="max-width:360px;">
+                        <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
+                        <div class="input-group-btn">
+                          <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                      </div>
+                  </form>
+                  <ul class="nav navbar-nav">
+                    <li>
+                      <a href="index.php"><i class="glyphicon glyphicon-home"></i> Home</a>
+                    </li>
+                    <li>
+                      <a href="post.php"><i class="glyphicon glyphicon-plus"></i> Post</a>
+                    </li>
+                    <li>
+                      <a href="#"><span class="badge">badge</span></a>
+                    </li>
+                  </ul>
+                  <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i></a>
+                      <ul class="dropdown-menu">
+                        <li><a href="">More</a></li>
+                        <li><a href="">More</a></li>
+                        <li><a href="">More</a></li>
+                        <li><a href="">More</a></li>
+                        <li><a href="">More</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                  </nav>
+              </div>
+              <!-- /top nav -->
+            
+              <div class="padding">
+                  <div class="full col-sm-9">
+                    
+                      <!-- content -->                      
+                      <div class="row">
+                        
+                        <!-- main col left --> 
+                          <div class="col-sm-5">                                                      
+                                                        
+                              <div class="panel panel-default">
+                                  <div class="panel-heading"><h4>What Is Bootstrap?</h4></div>
+                                  <div class="panel-body">
+                                      Bootstrap is front end frameworkto build custom web applications that are fast, responsive &amp; intuitive. It consist of CSS and HTML for typography, forms, buttons, tables, grids, and navigation along with custom-built jQuery plug-ins and support for responsive layouts. With dozens of reusable components for navigation, pagination, labels, alerts etc..                          </div>
+                              </div>
+                              
+                              <div class="well"> 
+                                  <form class="form-horizontal" method="POST" role="form" action="update.php" enctype="multipart/form-data">
+                                      <h4>Changer le texte</h4>
+                                      <div class="form-group" style="padding:14px;">
+                                      <textarea class="form-control" placeholder="Description" name="message"><?php echo $textAAffich ?></textarea>
+                                      </div>
+                                      <input class="btn btn-primary pull-right" type="submit" value="Changer" />
+                                      <ul class="list-inline">
+                                      <li><input type="hidden" name="pageRedirect" value="<?php echo $pageNom?>"><input type="hidden" name="idModif" value="<?php echo $idModif?>"></li>
+                                      </ul>
+                                  </form>
+                              </div>   
 
-                                <div class="panel panel-default">
-                                    <div class="panel-heading"><h4>Terminer la modification</h4></div>
-                                    <div class="panel-body">
-                                    <a class="btn btn-primary" href="index.php">Fin de la modification</a> 
-                                    </div>
-                                </div>                    		
-                           
+                              <div class="panel panel-default">
+                                  <div class="panel-heading"><h4>Terminer la modification</h4></div>
+                                  <div class="panel-body">
+                                  <a class="btn btn-primary" href="index.php">Fin de la modification</a> 
+                                  </div>
+                              </div>                    		
+                          
+                          </div>
+                        
+                        <!-- main col right -->
+                            <div class="col-sm-7">
+                                                              
+                              <div class="panel panel-default">                                  
+                                  <div class="panel-body">
+                                  <div class="clearfix"></div>
+                                  <h2>MODIFICATION</h2>
+                                  </div>
+                              </div>    
+
+                              <div class="well"> 
+                                  <form class="form-horizontal" method="POST" role="form" action="uploadInsert.php" enctype="multipart/form-data">
+                                      <h4>Ajouter un média</h4>
+                                      <input class="btn btn-primary pull-right" type="submit" value="Ajouter" />
+                                      <ul class="list-inline">
+                                          <li><input type="file" name="import[]" accept="image/png, image/jpeg, image/jpg, image/gif, video/mp4, video/webm, video/ogg, audio/ogg, audio/mpeg, audio/mp3" multiple></li>
+                                      </ul>
+                                      <input type="hidden" name="pageRedirect" value="<?php echo $pageNom?>">
+                                      <input type="hidden" name="idModif" value="<?php echo $idModif?>">
+                                  </form>
+                              </div>  
+                              
+                              <div class="panel panel-default">
+                                  <div class="panel-heading"> <h4>Supprimer un ou des médias</h4></div>
+                                  <div class="panel-body">
+                                    <form class="form-horizontal" method="POST" role="form" action="suppression.php">
+                                      <?php affichageMediasModif($idModif)?>
+                                      <input type="hidden" name="pageRedirect" value="<?php echo $pageNom?>">
+                                    </form>
+                                  </div>
+                              </div>                                                                                                         
+                          
                             </div>
-                          
-                          <!-- main col right -->
-                             <div class="col-sm-7">
-                                                               
-                                <div class="panel panel-default">                                  
-                                    <div class="panel-body">
-                                    <div class="clearfix"></div>
-                                    <h2>MODIFICATION</h2>
-                                    </div>
-                                </div>    
-
-                                <div class="well"> 
-                                    <form class="form-horizontal" method="POST" role="form" action="upload.php" enctype="multipart/form-data">
-                                        <h4>Ajouter un média</h4>
-                                        <input class="btn btn-primary pull-right" type="submit" value="Ajouter" />
-                                        <ul class="list-inline">
-                                            <li><input type="file" name="import[]" accept="image/png, image/jpeg, image/jpg, image/gif, video/mp4, video/webm, video/ogg, audio/ogg, audio/mpeg" multiple></li>
-                                        </ul>
-                                        <input type="hidden" name="Max_FILE_Size" value="10000000">
-                                    </form>
-                                </div>  
-                                
-                                <div class="panel panel-default">
-                                    <div class="panel-heading"> <h4>Supprimer un ou des médias</h4></div>
-                                    <div class="panel-body">
-                                        <form class="form-horizontal" method="POST" role="form" action="upload.php">
-                                            <ul class="list-group">
-                                                <li class="list-group-item"><input type="checkbox" id="music1" name="media" value="music"><label for="music1">Musique</label></li>
-                                                <li class="list-group-item"><input type="checkbox" id="music2" name="media" value="music"><label for="music2">Musique</label></li>
-                                                <li class="list-group-item"><input type="checkbox" id="music3" name="media" value="music"><label for="music3">Musique</label></li>
-                                            </ul>
-                                            <input class="btn btn-primary pull-right" type="submit" value="Supprimer" />
-                                        </form>
-                                    </div>
-                                </div>                                                                                                         
-                            
-                             </div>
-                       </div><!--/row-->
-                      
-                        <div class="row">
-                          <div class="col-sm-6">
-                            <a href="#">Twitter</a> <small class="text-muted">|</small> <a href="#">Facebook</a> <small class="text-muted">|</small> <a href="#">Google+</a>
-                          </div>
-                        </div>
-                      
-                        <div class="row" id="footer">    
-                          <div class="col-sm-6">
-                            
-                          </div>
-                          <div class="col-sm-6">
-                            <p>
-                            <a href="#" class="pull-right">©Copyright 2013</a>
-                            </p>
-                          </div>
-                        </div>
-                      
-                      <hr>
-                      
-                      <h4 class="text-center">
-                      <a href="http://bootply.com/96266" target="ext">Download this Template @Bootply</a>
-                      </h4>
-                        
-                      <hr>
-                        
-                      
-                    </div><!-- /col-9 -->
-                </div><!-- /padding -->
-            </div>
-            <!-- /main -->
+                      </div><!--/row-->
+                                       
+                  </div><!-- /col-9 -->
+              </div><!-- /padding -->
+          </div>
+          <!-- /main -->
           
         </div>
     </div>
 </div>
 
 
-<!--post modal-->
-<div id="postModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog">
-  <div class="modal-content">
-      <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			Update Status
-      </div>
-      <div class="modal-body">
-          <form class="form center-block">
-            <div class="form-group">
-              <textarea class="form-control input-lg" autofocus="" placeholder="What do you want to share?"></textarea>
-            </div>
-          </form>
-      </div>
-      <div class="modal-footer">
-          <div>
-          <button class="btn btn-primary btn-sm" data-dismiss="modal" aria-hidden="true">Post</button>
-            <ul class="pull-left list-inline"><li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li><li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li><li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li></ul>
-		  </div>	
-      </div>
-  </div>
-  </div>
-</div>
+
 	<!-- script references -->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
