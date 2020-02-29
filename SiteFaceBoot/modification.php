@@ -101,7 +101,7 @@ $pageNom = "modification.php?identifiant=" . $idModif;
                               </div>
                               
                               <div class="well"> 
-                                  <form class="form-horizontal" method="POST" role="form" action="update.php" enctype="multipart/form-data">
+                                  <form class="form-horizontal" method="POST" role="form" action="updateProcess.php" enctype="multipart/form-data">
                                       <h4>Changer le texte</h4>
                                       <div class="form-group" style="padding:14px;">
                                       <textarea class="form-control" placeholder="Description" name="message"><?php echo $textAAffich ?></textarea>
@@ -133,7 +133,7 @@ $pageNom = "modification.php?identifiant=" . $idModif;
                               </div>    
 
                               <div class="well"> 
-                                  <form class="form-horizontal" method="POST" role="form" action="uploadInsert.php" enctype="multipart/form-data">
+                                  <form class="form-horizontal" method="POST" role="form" action="updateProcess.php" enctype="multipart/form-data">
                                       <h4>Ajouter un média</h4>
                                       <input class="btn btn-primary pull-right" type="submit" value="Ajouter" />
                                       <ul class="list-inline">
@@ -147,7 +147,7 @@ $pageNom = "modification.php?identifiant=" . $idModif;
                               <div class="panel panel-default">
                                   <div class="panel-heading"> <h4>Supprimer un ou des médias</h4></div>
                                   <div class="panel-body">
-                                    <form class="form-horizontal" method="POST" role="form" action="suppression.php">
+                                    <form class="form-horizontal" method="POST" role="form" action="updateProcess.php">
                                       <?php affichageMediasModif($idModif)?>
                                       <input type="hidden" name="pageRedirect" value="<?php echo $pageNom?>">
                                     </form>

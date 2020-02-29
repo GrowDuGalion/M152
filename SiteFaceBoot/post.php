@@ -78,7 +78,7 @@
                          <div class="col-sm-5">                                                      
                            
                               <div class="well"> 
-                                   <form class="form-horizontal" method="POST" role="form" action="uploadInsert.php" enctype="multipart/form-data">
+                                   <form class="form-horizontal" method="POST" role="form" action="postProcess.php" enctype="multipart/form-data">
                                     <h4>What's New</h4>
                                      <div class="form-group" style="padding:14px;">
                                       <textarea class="form-control" placeholder="Description" name="Message"></textarea>

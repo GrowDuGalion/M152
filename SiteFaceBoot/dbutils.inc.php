@@ -439,7 +439,7 @@ function m152() {
         </p>    
         <p>
           <a href=\"modification.php?identifiant=%d\"><img src=\"ressource/iconModif.png\" width=\"32px\" height=\"38px\"></a>
-          <a href=\"suppression.php?identifiant=%d\"><img src=\"ressource/iconSupp.png\" width=\"28px\" height=\"28px\"></a>
+          <a href=\"deleteProcess.php?identifiant=%d\"><img src=\"ressource/iconSupp.png\" width=\"28px\" height=\"28px\"></a>
         </p>                   
       </div>
     </div>";
