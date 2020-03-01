@@ -1,3 +1,19 @@
+<?php
+//Démarrer une session
+if (session_status() == PHP_SESSION_NONE) 
+{
+     session_start();
+}
+//Récupérer les message succès et échecs si existant
+$message = "";
+if(isset($_SESSION["msg"]))
+{
+  $message = $_SESSION["msg"];
+}
+//Supprimer tous les variables session et détruire la session
+session_unset();
+session_destroy();
+?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -84,10 +100,10 @@
                                       <textarea class="form-control" placeholder="Description" name="Message"></textarea>
                                     </div>
                                     <input class="btn btn-primary pull-right" type="submit" value="Post" />
+                                    <?php echo $message; ?>
                                     <ul class="list-inline">
                                     <li><input type="file" name="import[]" accept="image/png, image/jpeg, image/jpg, image/gif, video/mp4, video/webm, video/ogg, audio/ogg, audio/mpeg, audio/mp3" multiple></li>
                                     </ul>
-                                    <input type="hidden" name="pageRedirect" value="index.php">
                                   </form>
                               </div>
                                                      		

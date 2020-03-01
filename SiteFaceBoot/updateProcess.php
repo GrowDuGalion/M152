@@ -6,36 +6,65 @@ $idModif = filter_input(INPUT_POST, 'idModif', FILTER_VALIDATE_INT);
 $message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
 $tableValeursMediaInsert = array();
 
+if (session_status() == PHP_SESSION_NONE) 
+{
+     session_start();
+}
+
+if(!isset($_SESSION['noteModif']))
+{
+     $_SESSION['noteModif'] = "";
+}
+
+//Changer le message du post
 if(!empty($message) && !empty($idModif))
 {
-    updPostWithIdPost($message, $idModif);
+    if(updPostWithIdPost($message, $idModif))
+    {
+          $_SESSION['noteModif'] .= 'Texte changé pour "' . $message . '" dans base de donnée ! </br>';
+    }
+    else {
+          $_SESSION['noteModif'] .= "Echec changement texte dans base de donnée ! </br>";
+    }
 }
 
 
-
-//Depuis la page modification.php
 //Supprimer les medias selectionnés d'un post choisi
 if(!empty($_POST['media']))
 {
     $autorisationSupDansBase = true;
     $tableIdASup = array();
 
-    foreach($_POST['media'] as $idASup)
-    {
-        $unMediaASup = getMediaWithIdMedia($idASup);
-        if(unlink($unMediaASup[0]['nomMedia']) == false)
-        {
-            $autorisationSupDansBase = false;
-        }
-        else {
-            $tableIdASup[] = $idASup;
-        }
-    }
+     //Parcourir les values des checkbox cochées
+     foreach($_POST['media'] as $idASup)
+     {
+          //Récupérer le nom du média avec l'id dans value du checkbox
+          $unMediaASup = getMediaWithIdMedia($idASup);
+          //Supprimer les fichiers liés au média choisi
+          if(unlink($unMediaASup[0]['nomMedia']) == false)
+          {
+               $_SESSION['noteModif'] .= "Echec suppression Fichier ! </br>";
+               //Si problème, ne pas autoriser supprimer dans base de donnée
+               $autorisationSupDansBase = false;
+          }
+          else {
+               //Conserver les id pour supprimer dans base de ddonnée plus tard
+               $tableIdASup[] = $idASup;
+               $_SESSION['noteModif'] .= "Succès suppression fichier " . substr($unMediaASup[0]['nomMedia'],21) . " ! </br>";
+          }
+     }
 
-    if($autorisationSupDansBase)
-    {
-        transactionDeleteMedias($tableIdASup);
-    }
+     //Si autorisé, supprimer les medias choisis dans base de donnée
+     if($autorisationSupDansBase)
+     {         
+          if(transactionDeleteMedias($tableIdASup))
+          {
+               $_SESSION['noteModif'] .= "Succès suppression dans base de donnée! </br>";
+          }
+          else {
+               $_SESSION['noteModif'] .= "Echec suppression dans base de donnée! </br>";
+          }
+     }
 }
 
 if(isset($_FILES['import']))
@@ -52,7 +81,8 @@ if(isset($_FILES['import']))
 
                if($taille> $taille_maxi) //Si taille dépasse la taille maximum autorisé
                {
-                    $erreur = " Vous devez choisir des fichiers moins lourds. <br/>";
+                    $erreur = "Vous devez choisir des fichiers moins lourds. <br/>";
+                    $_SESSION['noteModif'] .= "Fichier moins lourds svp ! <br/>";
                }
           }
 
@@ -63,7 +93,8 @@ if(isset($_FILES['import']))
                $extension = $_FILES['import']['type'][$j]; 
                if(!in_array($extension, $extensions)) //Si l'extension n'est pas dans le tableau
                {
-                    $erreur = ' Vous devez uploader un fichier de type png, gif, jpg, jpeg, video, audio. <br/>';
+                    $erreur = 'Vous devez uploader un fichier de type png, gif, jpg, video, audio ! <br/>';
+                    $_SESSION['noteModif'] .= "Seulement fichier type png, gif, jpg, video, audio ! <br/>";
                }
           }
 
@@ -89,6 +120,7 @@ if(isset($_FILES['import']))
                     if(move_uploaded_file($_FILES['import']['tmp_name'][$i], $chemin)) //Si la fonction renvoie TRUE, c'est que ça a fonctionné...
                     {
                          echo "Succes de l'upload ! <br/>";
+                         $_SESSION['noteModif'] .= "Succès upload fichier " . $fichier . " ! </br>";
                          //Faire un tableau des donnees d'un media pour insérer plus tard
                          //Seule les medias insérer avec succès pourront etre insérer dans la base de donnée
                          $tableValeursMediaInsert[] = array($extension, $chemin);
@@ -97,6 +129,7 @@ if(isset($_FILES['import']))
                     else //Sinon (la fonction renvoie FALSE).
                     {
                          echo 'Echec de l\'upload ! <br/>';
+                         $_SESSION['noteModif'] .= "Echec upload fichier " . $fichier . " ! </br>";
                     }
                }
                else
@@ -111,18 +144,32 @@ if(isset($_FILES['import']))
                echo "Demarrage de l'insertion ! <br/>";
 
                //Démarrer la transaction pour insérer dans la base de donnée
-               transactionInsertMedias($tableValeursMediaInsert,$idModif);       
+               if(transactionInsertMedias($tableValeursMediaInsert,$idModif))
+               {
+                    $_SESSION['noteModif'] .= "Succès insertion média(s) dans base de donnée ! </br>";
+               }  
+               else {
+                    $_SESSION['noteModif'] .= "Echec insertion média(s) dans base de donnée ! </br>";
+               }
           }
      }
      else 
      {
           echo 'Rien à uploader! <br/>';
+          $_SESSION['noteModif'] .= "Aucun fichier à uploader ! </br>";
      }
 }
 
+//Transaction pour modifier les timestamp du post et ses medias
+transactionUpdateTimePostMedias($idModif);
+
+//Redirection
 if(!empty($pageRedirection))
 {
-    header('Location: ' . $pageRedirection);
+     header('Location: ' . $pageRedirection);
+}
+else {
+     header('Location: index.php');    
 }
 
 ?>

@@ -1,19 +1,32 @@
 <?php
 require "./dbutils.inc.php";
-
+//Récupérer l'id du post sélectionné
 $idModif = filter_input(INPUT_GET, 'identifiant', FILTER_VALIDATE_INT);
 
+//Interdiction de modification sans $idModif
 if(empty($idModif))
 {
   header("Location: index.php");
 }
-
+//Récupérer les médias du post sélectionné pour les afficher plus tard
 $mediasAAffich = getMediaWithIdPost($idModif);
+//Récupérer le texte du post sélectionné pour l'afficher plus tard
 $textAAffich = getPostWithId($idModif)[0]["commentaire"];
 
-affichageMediasModif($idModif);
+//Créer l'addresse de redirection pour updateProcess.php
 $pageNom = "modification.php?identifiant=" . $idModif;
 
+//Démarrer une session
+if (session_status() == PHP_SESSION_NONE) 
+{
+     session_start();
+}
+$message = "Aucune note";
+//Récupérer les message de succès et échecs de la session si elle existe
+if(isset($_SESSION["noteModif"]))
+{
+  $message = $_SESSION["noteModif"];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,24 +60,10 @@ $pageNom = "modification.php?identifiant=" . $idModif;
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                     </button>
-                    <a href="/" class="navbar-brand logo">b</a>
+                    <a class="navbar-brand logo">b</a>
                   </div>
                   <nav class="collapse navbar-collapse" role="navigation">
-                  <form class="navbar-form navbar-left">
-                      <div class="input-group input-group-sm" style="max-width:360px;">
-                        <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
-                        <div class="input-group-btn">
-                          <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-                        </div>
-                      </div>
-                  </form>
                   <ul class="nav navbar-nav">
-                    <li>
-                      <a href="index.php"><i class="glyphicon glyphicon-home"></i> Home</a>
-                    </li>
-                    <li>
-                      <a href="post.php"><i class="glyphicon glyphicon-plus"></i> Post</a>
-                    </li>
                     <li>
                       <a href="#"><span class="badge">badge</span></a>
                     </li>
@@ -104,11 +103,11 @@ $pageNom = "modification.php?identifiant=" . $idModif;
                                   <form class="form-horizontal" method="POST" role="form" action="updateProcess.php" enctype="multipart/form-data">
                                       <h4>Changer le texte</h4>
                                       <div class="form-group" style="padding:14px;">
-                                      <textarea class="form-control" placeholder="Description" name="message"><?php echo $textAAffich ?></textarea>
+                                      <textarea class="form-control" placeholder="Description" name="message"><?php echo $textAAffich; ?></textarea>
                                       </div>
                                       <input class="btn btn-primary pull-right" type="submit" value="Changer" />
                                       <ul class="list-inline">
-                                      <li><input type="hidden" name="pageRedirect" value="<?php echo $pageNom?>"><input type="hidden" name="idModif" value="<?php echo $idModif?>"></li>
+                                      <li><input type="hidden" name="pageRedirect" value="<?php echo $pageNom; ?>"><input type="hidden" name="idModif" value="<?php echo $idModif; ?>"></li>
                                       </ul>
                                   </form>
                               </div>   
@@ -139,8 +138,8 @@ $pageNom = "modification.php?identifiant=" . $idModif;
                                       <ul class="list-inline">
                                           <li><input type="file" name="import[]" accept="image/png, image/jpeg, image/jpg, image/gif, video/mp4, video/webm, video/ogg, audio/ogg, audio/mpeg, audio/mp3" multiple></li>
                                       </ul>
-                                      <input type="hidden" name="pageRedirect" value="<?php echo $pageNom?>">
-                                      <input type="hidden" name="idModif" value="<?php echo $idModif?>">
+                                      <input type="hidden" name="pageRedirect" value="<?php echo $pageNom; ?>">
+                                      <input type="hidden" name="idModif" value="<?php echo $idModif; ?>">
                                   </form>
                               </div>  
                               
@@ -148,12 +147,19 @@ $pageNom = "modification.php?identifiant=" . $idModif;
                                   <div class="panel-heading"> <h4>Supprimer un ou des médias</h4></div>
                                   <div class="panel-body">
                                     <form class="form-horizontal" method="POST" role="form" action="updateProcess.php">
-                                      <?php affichageMediasModif($idModif)?>
-                                      <input type="hidden" name="pageRedirect" value="<?php echo $pageNom?>">
+                                      <?php affichageMediasModif($idModif); ?>
+                                      <input type="hidden" name="pageRedirect" value="<?php echo $pageNom; ?>">
                                     </form>
                                   </div>
                               </div>                                                                                                         
-                          
+
+                              <div class="panel panel-default">
+                                  <div class="panel-heading"><h4>Notes</h4></div>
+                                  <div class="panel-body">
+                                    <?php echo $message; ?>                  
+                                  </div>
+                              </div>
+                              
                             </div>
                       </div><!--/row-->
                                        

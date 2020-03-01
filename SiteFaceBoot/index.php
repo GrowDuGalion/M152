@@ -1,5 +1,12 @@
 <?php
 require "./dbutils.inc.php";
+//Supprimer tous les variables session et détruire la session
+if (session_status() == PHP_SESSION_NONE) 
+{
+  session_start();
+}
+session_unset();
+session_destroy();
 ?>
 <!DOCTYPE html>
 <html lang="en">

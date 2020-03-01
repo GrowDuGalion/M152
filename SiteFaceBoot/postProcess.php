@@ -1,10 +1,21 @@
 <?php
 require "./dbutils.inc.php";
 
+//Démarrer une session
+if (session_status() == PHP_SESSION_NONE) 
+{
+     session_start();
+}
+
+//Message du post à insérer
 $MessagePost = filter_input(INPUT_POST, 'Message', FILTER_SANITIZE_STRING);
+//Table des médias à insérer dans base de donnée
 $tableValeursMediaInsert = array();
 
-var_dump($_FILES['import']['type'][0]);
+//Message de succès et échecs
+$_SESSION["msg"] = "";
+
+//var_dump($_FILES['import']['type'][0]);
 
 if(isset($_FILES['import']))
 {
@@ -21,6 +32,7 @@ if(isset($_FILES['import']))
                if($taille> $taille_maxi) //Si taille dépasse la taille maximum autorisé
                {
                     $erreur = " Vous devez choisir des fichiers moins lourds. <br/>";
+                    $_SESSION["msg"] .= "Fichier moins lourd svp ! <br/>";
                }
           }
 
@@ -32,6 +44,7 @@ if(isset($_FILES['import']))
                if(!in_array($extension, $extensions)) //Si l'extension n'est pas dans le tableau
                {
                     $erreur = ' Vous devez uploader un fichier de type png, gif, jpg, jpeg, video, audio. <br/>';
+                    $_SESSION["msg"] .= "Seulement fichier type png, gif, jpg, video, audio ! <br/>";
                }
           }
 
@@ -57,6 +70,7 @@ if(isset($_FILES['import']))
                     if(move_uploaded_file($_FILES['import']['tmp_name'][$i], $chemin)) //Si la fonction renvoie TRUE, c'est que ça a fonctionné...
                     {
                          echo "Succes de l'upload ! <br/>";
+                         $_SESSION["msg"] .= "Succes upload fichier " . $fichier . " ! <br/>";
                          //Faire un tableau des donnees d'un media pour insérer plus tard
                          //Seule les medias insérer avec succès pourront etre insérer dans la base de donnée
                          $tableValeursMediaInsert[] = array($extension, $chemin);
@@ -65,6 +79,7 @@ if(isset($_FILES['import']))
                     else //Sinon (la fonction renvoie FALSE).
                     {
                          echo 'Echec de l\'upload ! <br/>';
+                         $_SESSION["msg"] .= "Echec upload fichier " . $fichier . " ! <br/>";
                     }
                }
                else
@@ -83,12 +98,16 @@ if(isset($_FILES['import']))
 
 if(isset($MessagePost) || isset($tableValeursMediaInsert[0]))
 {
-     echo "Demarrage de l'insertion ! <br/>";
-
      //Démarrer la transaction pour insérer dans la base de donnée
-     transactionInsertPostMedias($tableValeursMediaInsert, $MessagePost);
+     if(transactionInsertPostMedias($tableValeursMediaInsert, $MessagePost))
+     {
+          $_SESSION["msg"] .= "Succès de l'insertion ! <br/>";
+     }
+     else {
+          $_SESSION["msg"] .= "Echec de l'insertion ! <br/>";
+     }
 
-     header("Location: index.php");
+     header("Location: post.php");
   
 }
 ?>

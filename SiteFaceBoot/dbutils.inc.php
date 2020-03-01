@@ -1,7 +1,8 @@
 <?php
 
 require "./dbconnector.inc.php";
-$rollBackAutorise;
+//Variable pour auoriser ou non le commit des transactions
+$commitAutorise;
 
 /**
  * Connecteur de la base de données du M151.
@@ -35,7 +36,7 @@ function m152() {
   function transactionInsertPostMedias($tableMediaParam, $textParam)
   {
     //booleen pour autoriser un rollback si detection d'une erreur PDO dans les fonctions d'insertion
-    $rollBackAutorise = false;
+    $commitAutorise = true;
 
     //Singleton PDO
     static $ps = null;
@@ -63,21 +64,23 @@ function m152() {
     }
 
     //Faire un rollback s'il y a erreur, sinon commit les insertions
-    if($rollBackAutorise)
+    if($commitAutorise)
     {
-      $ps->rollBack();
+      $ps->commit();     
     }
     else 
     {
-      $ps->commit();
+      $ps->rollBack();
     }
+
+    return $commitAutorise;
   }
 
   //Faire une transaction pour inserer des medias sur un post existant
   function transactionInsertMedias($tableMediaParam, $idParam)
   {
     //booleen pour autoriser un rollback si detection d'une erreur PDO dans les fonctions d'insertion
-    $rollBackAutorise = false;
+    $commitAutorise = true;
 
     //Singleton PDO
     static $ps = null;
@@ -99,21 +102,24 @@ function m152() {
     }
 
     //Faire un rollback s'il y a erreur, sinon commit les insertions
-    if($rollBackAutorise)
+    if($commitAutorise)
     {
-      $ps->rollBack();
+      $ps->commit();
+      
     }
     else 
     {
-      $ps->commit();
+      $ps->rollBack();
     }
+
+    return $commitAutorise;
   }
 
   //Faire une transaction pour supprimer un post existant avec ses medias
   function transactionDeletePostMedias($idParam)
   {
     //booleen pour autoriser un rollback si detection d'une erreur PDO dans les fonctions d'insertion
-    $rollBackAutorise = false;
+    $commitAutorise = true;
 
     //Singleton PDO
     static $ps = null;
@@ -130,21 +136,24 @@ function m152() {
     delPostWithIdPost($idParam);
 
     //Faire un rollback s'il y a erreur, sinon commit les insertions
-    if($rollBackAutorise)
+    if($commitAutorise)
     {
-      $ps->rollBack();
+      $ps->commit();
+      
     }
     else 
     {
-      $ps->commit();
+      $ps->rollBack();
     }
+
+    return $commitAutorise;
   }
 
   //Faire une transaction pour supprimer des medias d'un post
   function transactionDeleteMedias($tableIdParam)
   {
     //booleen pour autoriser un rollback si detection d'une erreur PDO dans les fonctions d'insertion
-    $rollBackAutorise = false;
+    $commitAutorise = true;
 
     //Singleton PDO
     static $ps = null;
@@ -163,14 +172,50 @@ function m152() {
     }
 
     //Faire un rollback s'il y a erreur, sinon commit les insertions
-    if($rollBackAutorise)
+    if($commitAutorise)
     {
-      $ps->rollBack();
+      $ps->commit();
+      
     }
     else 
     {
+      $ps->rollBack();
+    }
+
+    return $commitAutorise;
+  }
+
+  //Faire une transaction pour supprimer des medias d'un post
+  function transactionUpdateTimePostMedias($idParam)
+  {
+    //booleen pour autoriser un rollback si detection d'une erreur PDO dans les fonctions d'insertion
+    $commitAutorise = true;
+
+    //Singleton PDO
+    static $ps = null;
+    if ($ps == null) 
+    {
+      $ps = m152();
+    }
+
+    //commencer la transaction
+    $ps->beginTransaction();
+
+    //Mettre à jour les timestamp de modification
+    updPostTimeWithIdPost($idParam);
+    updMediaTimeWithIdPost($idParam);
+
+    //Faire un rollback s'il y a erreur, sinon commit les insertions
+    if($commitAutorise)
+    {
       $ps->commit();
     }
+    else 
+    {    
+      $ps->rollBack();
+    }
+
+    return $commitAutorise;
   }
 
   //Insertion dans la table media
@@ -192,7 +237,7 @@ function m152() {
               $answer = true;
           } catch (PDOException $e) {
             echo $e->getMessage();
-            $rollBackAutorise = true;
+            $commitAutorise = false;
           }
           // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
@@ -216,13 +261,14 @@ function m152() {
               $answer = true;
           } catch (PDOException $e) {
             echo $e->getMessage();
-            $rollBackAutorise = true;
+            $commitAutorise = false;
           }
           // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
           return $answer;
   }
 
+  //Fonction obtenir l'id du dernier post inséré
   function getLastPostId() 
   {
     static $ps = null;
@@ -238,13 +284,14 @@ function m152() {
         $answer = $ps->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
       echo $e->getMessage();
-      $rollBackAutorise = true;
+      $commitAutorise = false;
     }
     // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
     return $answer;
   }
 
+  //Fonction obtenir tous les posts
   function getAllPost()
   {
     static $ps = null;
@@ -260,12 +307,14 @@ function m152() {
         $answer = $ps->fetchall(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
       echo $e->getMessage();
-      $rollBackAutorise = true;
+      $commitAutorise = false;
     }
     // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
     return $answer;
   }
+
+  //Fonction obtenir le post à partir de son idPost
   function getPostWithId($idParam)
   {
     static $ps = null;
@@ -282,13 +331,14 @@ function m152() {
         $answer = $ps->fetchall(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
       echo $e->getMessage();
-      $rollBackAutorise = true;
+      $commitAutorise = false;
     }
     // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
     return $answer;
   }
 
+  //Fonction obtenir les médias à partir d'un isPost
   function getMediaWithIdPost($idParam)
   {
     static $ps = null;
@@ -305,13 +355,14 @@ function m152() {
         $answer = $ps->fetchall(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
       echo $e->getMessage();
-      $rollBackAutorise = true;
+      $commitAutorise = false;
     }
     // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
     return $answer;
   }
 
+  //Fonction obtenir un média à partir de son idMedia
   function getMediaWithIdMedia($idParam)
   {
     static $ps = null;
@@ -328,13 +379,14 @@ function m152() {
         $answer = $ps->fetchall(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
       echo $e->getMessage();
-      $rollBackAutorise = true;
+      $commitAutorise = false;
     }
     // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
     return $answer;
   }
 
+  //Fonction supprimer les médias à partir d'un idPost
   function delMediaWithIdPost($idParam)
   {
     static $ps = null;
@@ -351,13 +403,14 @@ function m152() {
       $answer = true;
     } catch (PDOException $e) {
       echo $e->getMessage();
-      $rollBackAutorise = true;
+      $commitAutorise = false;
     }
     // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
     return $answer;
   }
 
+  //Fonction Supprimer un média à partir de son idMedia
   function delMediaWithIdMedia($idParam)
   {
     static $ps = null;
@@ -374,13 +427,14 @@ function m152() {
       $answer = true;
     } catch (PDOException $e) {
       echo $e->getMessage();
-      $rollBackAutorise = true;
+      $commitAutorise = false;
     }
     // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
     return $answer;
   }
 
+   //Fonction Supprimer un post à partir de son idPost
   function delPostWithIdPost($idParam)
   {
     static $ps = null;
@@ -397,13 +451,14 @@ function m152() {
       $answer = true;
     } catch (PDOException $e) {
       echo $e->getMessage();
-      $rollBackAutorise = true;
+      $commitAutorise = false;
     }
     // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
     return $answer;
   }
 
+  //Fonction changer le texte d'un post à partir de son idPost
   function updPostWithIdPost($textParam,$idParam)
   {
     static $ps = null;
@@ -421,13 +476,62 @@ function m152() {
       $answer = true;
     } catch (PDOException $e) {
       echo $e->getMessage();
-      $rollBackAutorise = true;
+      $commitAutorise = false;
     }
     // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
   
     return $answer;
   }
 
+  //Fonction changer le temps de modification d'un post à partir de son idPost
+  function updPostTimeWithIdPost($idParam)
+  {
+    static $ps = null;
+    $sql = "UPDATE post SET modificationDate=CURRENT_TIME() WHERE idPost=:idParam;";
+  
+    if ($ps == null) {
+      $ps = m152()->prepare($sql);
+    }
+    $answer = false;
+    try {
+      $ps->bindParam(':idParam', $idParam, PDO::PARAM_INT);
+  
+      if ($ps->execute())
+      $answer = true;
+    } catch (PDOException $e) {
+      echo $e->getMessage();
+      $commitAutorise = false;
+    }
+    // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
+  
+    return $answer;
+  }
+
+  //Fonction changer le temps de modification des médias à partir d'un idPost
+  function updMediaTimeWithIdPost($idParam)
+  {
+    static $ps = null;
+    $sql = "UPDATE media SET modificationDate=CURRENT_TIME() WHERE idPost=:idParam;";
+  
+    if ($ps == null) {
+      $ps = m152()->prepare($sql);
+    }
+    $answer = false;
+    try {
+      $ps->bindParam(':idParam', $idParam, PDO::PARAM_INT);
+  
+      if ($ps->execute())
+      $answer = true;
+    } catch (PDOException $e) {
+      echo $e->getMessage();
+      $commitAutorise = false;
+    }
+    // return (isset($answer["iduser"]) ? $answer["iduser"] : False);
+  
+    return $answer;
+  }
+
+  //Fonction afficher des posts et leurs médias dans index.php
   function affichagePost($cote)
   {  
     $formatMessage = "<div class=\"panel panel-default\">
@@ -443,15 +547,17 @@ function m152() {
         </p>                   
       </div>
     </div>";
-
+    //Variable qui contiendra les blocks post et leurs médias
     $message = "";
     
     foreach(getAllPost() as $post)
     {
+      //Variable qui contiendra les balises html d'affichage des médias, La variable sera inséré dans le block message du post
       $mediaMessage = "";
       
       $permisAffiche = false; 
 
+      //Gérer quel côté afficher en fonction du pair/impair de l'idPost
       if($cote == "droite")
       {
         if($post['idPost']%2 != 0)
@@ -469,14 +575,17 @@ function m152() {
 
       if($permisAffiche)
       {     
+        //Générer les balises pour afficher les médias
         foreach(getMediaWithIdPost($post['idPost']) as $media)
-        {                   
+        {          
+          //Pour afficher une image         
           if(stristr($media['typeMedia'], 'image'))
           {
             $cheminImage = $media['nomMedia'];
             $formatImage = "<img src=\"%s\" alt=\"Photo de grow\" width=\"100%%\"/>";
             $mediaMessage .= sprintf($formatImage, $cheminImage);
           }
+          //Pour afficher une vidéo
           if(stristr($media['typeMedia'], 'video'))
           {
             $cheminVideo = $media['nomMedia'];
@@ -486,6 +595,7 @@ function m152() {
                               </video>";
             $mediaMessage .= sprintf($formatVideo, $cheminVideo, $typeVideo);
           }
+          //Pour afficher une audio  
           if(stristr($media['typeMedia'], 'audio'))
           {
             $cheminAudio = $media['nomMedia'];
@@ -497,9 +607,12 @@ function m152() {
           }                      
         }  
         
+        //Récupérer le texte du post
         $textMessage = $post['commentaire'];
+        //Id du post utilisé pour les suppression et modification
         $idMessage = $post['idPost'];
 
+        //Ajouter un block post
         $message .= sprintf($formatMessage,$mediaMessage,$textMessage, $idMessage, $idMessage); 
       }                           
     }
@@ -507,19 +620,23 @@ function m152() {
     echo $message;    
   }
 
+  //Fonction afficher des médias supprimables dans modification.php
   function affichageMediasModif($idParam)
   {
     $formatForm = "<ul class=\"list-group\">%s</ul><input class=\"btn btn-primary pull-right\" type=\"submit\" value=\"Supprimer\" />";
 
+    //Récupérer les médias supprimables à afficher dans modification.php
     $tableMediasModif = getMediaWithIdPost($idParam);
     $formAReturn = "";
     $compteur = 0;
 
+    //Vérifier si le post a au moins un média
     if(count($tableMediasModif)>0)
     {
       $mediaLi = "";      
       foreach ($tableMediasModif as $media) 
       {
+        //Créer un checkbox avec le texte correspondant nom du média et la value correspondant à l'id du média
         $formatMediaLi = "<li class=\"list-group-item\"><input type=\"checkbox\" id=\"%s\" name=\"media[]\" value=\"%d\"><label for=\"%s\">%s</label></li>";
         $idCheckbox = "m" . $compteur;
         $valueCheckbox = $media['idMedia'];
@@ -533,6 +650,7 @@ function m152() {
     }
     else 
     {
+      //Mettre aucun checkbox si pas de média
       $formAReturn = "Aucun média";
     }
 
