@@ -8,6 +8,13 @@ if(empty($idModif))
 {
   header("Location: index.php");
 }
+
+//Interdiction de modification sans $idModif existant dans base
+if(empty(getPostWithId($idModif)))
+{
+  header("Location: index.php");
+}
+
 //Récupérer les médias du post sélectionné pour les afficher plus tard
 $mediasAAffich = getMediaWithIdPost($idModif);
 //Récupérer le texte du post sélectionné pour l'afficher plus tard
@@ -156,7 +163,7 @@ if(isset($_SESSION["noteModif"]))
                               <div class="panel panel-default">
                                   <div class="panel-heading"><h4>Notes</h4></div>
                                   <div class="panel-body">
-                                    <?php echo $message; ?>                  
+                                    <?php echo $message;?>                  
                                   </div>
                               </div>
                               

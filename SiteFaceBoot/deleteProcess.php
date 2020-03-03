@@ -3,6 +3,12 @@ require "./dbutils.inc.php";
 //Récupérer l'id du post sélectionné
 $idGet = filter_input(INPUT_GET, 'identifiant', FILTER_SANITIZE_STRING);
 
+//Interdiction de suppression sans $idModif existant dans base
+if(empty(getPostWithId($idGet)))
+{
+  header("Location: index.php");
+}
+
 //Supprimer le post et tous ses médias
 if(!empty($idGet))
 {

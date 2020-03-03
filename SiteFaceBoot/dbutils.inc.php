@@ -295,7 +295,7 @@ function m152() {
   function getAllPost()
   {
     static $ps = null;
-    $sql = "SELECT * FROM post ORDER BY creationDate DESC LIMIT 30;";
+    $sql = "SELECT * FROM post ORDER BY creationDate DESC LIMIT 50;";
   
     if ($ps == null) {
       $ps = m152()->prepare($sql);
