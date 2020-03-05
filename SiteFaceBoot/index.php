@@ -1,10 +1,18 @@
 <?php
 require "./dbutils.inc.php";
-//Supprimer tous les variables session et détruire la session
+
 if (session_status() == PHP_SESSION_NONE) 
 {
   session_start();
 }
+
+$message = "";
+if(isset($_SESSION['msgSup']))
+{
+  $message = $_SESSION['msgSup'];
+}
+
+//Supprimer tous les variables session et détruire la session
 session_unset();
 session_destroy();
 ?>
@@ -102,8 +110,13 @@ session_destroy();
                               <div class="panel panel-default">
                                 <div class="panel-heading"><h4>What Is Bootstrap?</h4></div>
                                	<div class="panel-body">
-                                	Bootstrap is front end frameworkto build custom web applications that are fast, responsive &amp; intuitive. It consist of CSS and HTML for typography, forms, buttons, tables, grids, and navigation along with custom-built jQuery plug-ins and support for responsive layouts. With dozens of reusable components for navigation, pagination, labels, alerts etc..                          </div>
+                                	Bootstrap is front end frameworkto build custom web applications that are fast, responsive &amp; intuitive. It consist of CSS and HTML for typography, forms, buttons, tables, grids, and navigation along with custom-built jQuery plug-ins and support for responsive layouts. With dozens of reusable components for navigation, pagination, labels, alerts etc..                          
+                                </div>
+                                <div class="panel-body">
+                                  <?php echo "Message sur la suppression : </br>" . $message; ?>
+                                </div>
                               </div>
+                                
 
                               <?php
                                 affichagePost("gauche");
