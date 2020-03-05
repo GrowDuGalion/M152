@@ -46,13 +46,13 @@ if(!empty($idGet))
     {
         $_SESSION['msgSup'] .= "Annulation de la suppression du post ! </br>";
     }
-    
+
     //Si la table des idMedia à supprimer n'est pas vide, commencer suppression dans base de donnée
     if(!empty($tableIdASup))
     {
         if(transactionDeletePostMedias($idGet, $tableIdASup, $AutorisationSupPost))
         {
-            $_SESSION['msgSup'] .= "Succes la suppression des médias autorisés cités dessus de la base de donnée ! </br>";
+            $_SESSION['msgSup'] .= "Succes de la suppression des médias de la base de donnée cités dessus ! </br>";
 
             if($AutorisationSupPost)
             {
