@@ -32,39 +32,47 @@ if(!empty($message) && !empty($idModif))
 //Supprimer les medias selectionnés d'un post choisi
 if(!empty($_POST['media']))
 {
-    $autorisationSupDansBase = true;
-    $tableIdASup = array();
+     $tableIdASup = array();
+     $tableNomASup = array();
 
-     //Parcourir les values des checkbox cochées
-     foreach($_POST['media'] as $idASup)
+     //Récupérer les noms et id des médias à supprimer
+     foreach ($_POST['media'] as $idASup) 
      {
           //Récupérer le nom du média avec l'id dans value du checkbox
           $unMediaASup = getMediaWithIdMedia($idASup);
-          //Supprimer les fichiers liés au média choisi
-          if(unlink($unMediaASup[0]['nomMedia']) == false)
-          {
-               $_SESSION['noteModif'] .= "Echec suppression Fichier ! </br>";
-               //Si problème, ne pas autoriser supprimer dans base de donnée
-               $autorisationSupDansBase = false;
-          }
-          else {
-               //Conserver les id pour supprimer dans base de ddonnée plus tard
-               $tableIdASup[] = $idASup;
-               $_SESSION['noteModif'] .= "Succès suppression fichier " . substr($unMediaASup[0]['nomMedia'],21) . " ! </br>";
-          }
+          $tableIdASup[] = $unMediaASup[0]['idMedia'];
+          $tableNomASup[] = $unMediaASup[0]['nomMedia'];
      }
 
-     //Si autorisé, supprimer les medias choisis dans base de donnée
-     if($autorisationSupDansBase)
+     //Vérifier qu'il y a des médias à supprimer
+     if(!empty($tableIdASup) && !empty($tableNomASup))
      {         
+          //Faire une transaction de suppression des médias sélectionnés dans la base de donnée
           if(transactionDeleteMedias($tableIdASup))
           {
-               $_SESSION['noteModif'] .= "Succès suppression dans base de donnée! </br>";
+               $_SESSION['noteModif'] .= "Succès suppression dans base de donnée ! </br>";
+
+               //Parcourir les noms des médias à supprimer
+               foreach($tableNomASup as $nomASup)
+               {
+                    //Supprimer les fichiers liés au média choisi
+                    if(unlink($nomASup) == false)
+                    {
+                         $_SESSION['noteModif'] .= "Echec suppression fichier " . substr($nomASup,21) . " ! </br>";
+                    }
+                    else {
+                         $_SESSION['noteModif'] .= "Succès suppression fichier " . substr($nomASup,21) . " ! </br>";
+                    }
+               }
           }
           else {
-               $_SESSION['noteModif'] .= "Echec suppression dans base de donnée! </br>";
+               $_SESSION['noteModif'] .= "Echec suppression dans base de donnée ! </br>";
           }
-     }
+     }  
+     else {
+          $_SESSION['noteModif'] .= "Aucun média à supprimer ! </br>";
+     } 
+ 
 }
 
 if(isset($_FILES['import']))

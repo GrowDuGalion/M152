@@ -25,44 +25,51 @@ if(!empty($idGet))
     $mediasASup = getMediaWithIdPost($idGet);
     $AutorisationSupPost = true;
     $tableIdASup = array();
+    $tableNomASup = array();
 
-    //Supprimer les fichers médias du post choisi
+    //Récupérer les noms et id des médias à supprimer
     foreach ($mediasASup as $unMediaASup) 
     {
-        if(unlink($unMediaASup['nomMedia']) == false)
-        {
-            //Si problème, ne pas autoriser supprimer le post dans base de donnée            
-            $AutorisationSupPost = false;
-            $_SESSION['msgSup'] .= "Echec de la suppression du fichier " . substr($unMediaASup['nomMedia'],21). " ! </br>";
-        }   
-        else {
-            //Ajouter dans une table des idMedia à supprimer
-            $tableIdASup[] = $unMediaASup['idMedia'];
-            $_SESSION['msgSup'] .= "Succes de la suppression du fichier " . substr($unMediaASup['nomMedia'],21). " ! </br>";
-        }
-    }    
-
-    if(!$AutorisationSupPost)
-    {
-        $_SESSION['msgSup'] .= "Annulation de la suppression du post ! </br>";
+        $tableIdASup[] = $unMediaASup['idMedia'];
+        $tableNomASup[] = $unMediaASup['nomMedia'];
     }
 
-    //Si la table des idMedia à supprimer n'est pas vide, commencer suppression dans base de donnée
-    if(!empty($tableIdASup))
+    //Déclencher la transaction que s'il y a des médias à supprimmer
+    if(!empty($tableIdASup) && !empty($tableNomASup))
     {
-        if(transactionDeletePostMedias($idGet, $tableIdASup, $AutorisationSupPost))
+        if(transactionDeletePostMedias($idGet, $tableIdASup))
         {
-            $_SESSION['msgSup'] .= "Succes de la suppression des médias de la base de donnée cités dessus ! </br>";
-
-            if($AutorisationSupPost)
+            $_SESSION['msgSup'] .= "Succes de la suppression des médias de la base de donnée! </br>";    
+            
+            //Supprimer les fichers médias du post choisi après transaction de suppression réussie
+            foreach ($tableNomASup as $unMediaASup) 
             {
-                $_SESSION['msgSup'] .= "Succès de la suppression du post de la base de donnée ! </br>";
-            }           
+                if(unlink($unMediaASup) == false)
+                {         
+                    $_SESSION['msgSup'] .= "Echec de la suppression du fichier " . substr($unMediaASup,21). " ! </br>";
+                }   
+                else {                
+                    $_SESSION['msgSup'] .= "Succes de la suppression du fichier " . substr($unMediaASup,21). " ! </br>";
+                }
+            }                  
         }
-        else {
+        else 
+        {
             $_SESSION['msgSup'] .= "Echec de la suppression des médias et/ou du post de la base de donnée ! </br>";
+            $AutorisationSupPost = false;
         }
-    }   
+    }
+    
+    //Supprimer le post qui n'a pas de média ou transaction de suppression des médias a fonctionnée
+    if($AutorisationSupPost)
+    {        
+        $_SESSION['msgSup'] .= "Succès de la suppression du post de la base de donnée ! </br>";
+        delPostWithIdPost($idGet);
+    }
+    else {
+        $_SESSION['msgSup'] .= "Annulation de la suppression du post ! </br>";
+    }
+ 
 }
 
 header('Location: index.php');

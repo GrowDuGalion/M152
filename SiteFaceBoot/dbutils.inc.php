@@ -116,7 +116,7 @@ function m152() {
   }
 
   //Faire une transaction pour supprimer un post existant avec ses medias
-  function transactionDeletePostMedias($idParam, $tableIdParam, $autorisationSupPostParam)
+  function transactionDeletePostMedias($idParam, $tableIdParam)
   {
     //booleen pour autoriser un rollback si detection d'une erreur PDO dans les fonctions d'insertion
     $commitAutorise = true;
@@ -135,13 +135,7 @@ function m152() {
     foreach ($tableIdParam as $idASup) 
     {
       delMediaWithIdMedia($idASup);
-    }
-    
-    //Supprimer que si tous ses médias ont pu être supprimé dans le dossier upload
-    if($autorisationSupPostParam)
-    {
-      delPostWithIdPost($idParam);
-    }   
+    }     
 
     //Faire un rollback s'il y a erreur, sinon commit les insertions
     if($commitAutorise)
