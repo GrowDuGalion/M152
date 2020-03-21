@@ -625,7 +625,7 @@ function m152() {
   //Fonction afficher des médias supprimables dans modification.php
   function affichageMediasModif($idParam)
   {
-    $formatForm = "<ul class=\"list-group\">%s</ul><input class=\"btn btn-primary pull-right\" type=\"submit\" value=\"Supprimer\" />";
+    $formatForm = "<ul class=\"list-group\">%s</ul><input class=\"btn btn-primary pull-right\" type=\"submit\" name=\"btnSupMedia\" value=\"Supprimer\" />";
 
     //Récupérer les médias supprimables à afficher dans modification.php
     $tableMediasModif = getMediaWithIdPost($idParam);

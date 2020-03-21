@@ -12,7 +12,11 @@ if (session_status() == PHP_SESSION_NONE)
 //Créer une variable session pour récupérer des messages d'erreur
 $_SESSION['msgSup'] = "";
 
-
+//Interdiction de modification sans $idModif
+if(empty($idGet))
+{
+  header("Location: index.php");
+}
 //Interdiction de suppression sans $idModif existant dans base
 if(empty(getPostWithId($idGet)))
 {
@@ -49,7 +53,7 @@ if(!empty($idGet))
                     $_SESSION['msgSup'] .= "Echec de la suppression du fichier " . substr($unMediaASup,21). " ! </br>";
                 }   
                 else {                
-                    $_SESSION['msgSup'] .= "Succes de la suppression du fichier " . substr($unMediaASup,21). " ! </br>";
+                    $_SESSION['msgSup'] .= "Succès de la suppression du fichier " . substr($unMediaASup,21). " ! </br>";
                 }
             }                  
         }

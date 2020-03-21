@@ -112,7 +112,7 @@ if(isset($_SESSION["noteModif"]))
                                       <div class="form-group" style="padding:14px;">
                                       <textarea class="form-control" placeholder="Description" name="message"><?php echo $textAAffich; ?></textarea>
                                       </div>
-                                      <input class="btn btn-primary pull-right" type="submit" value="Changer" />
+                                      <input class="btn btn-primary pull-right" type="submit" name="btnModifText" value="Changer" />
                                       <ul class="list-inline">
                                       <li><input type="hidden" name="pageRedirect" value="<?php echo $pageNom; ?>"><input type="hidden" name="idModif" value="<?php echo $idModif; ?>"></li>
                                       </ul>
@@ -141,7 +141,7 @@ if(isset($_SESSION["noteModif"]))
                               <div class="well"> 
                                   <form class="form-horizontal" method="POST" role="form" action="updateProcess.php" enctype="multipart/form-data">
                                       <h4>Ajouter un média</h4>
-                                      <input class="btn btn-primary pull-right" type="submit" value="Ajouter" />
+                                      <input class="btn btn-primary pull-right" type="submit" name="btnAjoutMedia" value="Ajouter" />
                                       <ul class="list-inline">
                                           <li><input type="file" name="import[]" accept="image/png, image/jpeg, image/jpg, image/gif, video/mp4, video/webm, video/ogg, audio/ogg, audio/mpeg, audio/mp3" multiple></li>
                                       </ul>
@@ -156,6 +156,7 @@ if(isset($_SESSION["noteModif"]))
                                     <form class="form-horizontal" method="POST" role="form" action="updateProcess.php">
                                       <?php affichageMediasModif($idModif); ?>
                                       <input type="hidden" name="pageRedirect" value="<?php echo $pageNom; ?>">
+                                      <input type="hidden" name="idModif" value="<?php echo $idModif; ?>">
                                     </form>
                                   </div>
                               </div>                                                                                                         
